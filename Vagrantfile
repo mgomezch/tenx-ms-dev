@@ -23,7 +23,7 @@ Vagrant.configure(2) do |config|
 
   config.landrush.enabled = true
 
-  config.vm.synced_folder "m2", "/vagrant/.m2"
+  config.vm.synced_folder "m2", "/home/vagrant/.m2"
 
   config.vm.provider 'virtualbox' do |vb|
     vb.cpus = 2

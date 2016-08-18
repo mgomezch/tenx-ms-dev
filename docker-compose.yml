@@ -4,7 +4,7 @@ services:
 
   registry:
     image: "registry:2"
-    restart: always
+    restart: "always"
     ports:
       - "5000:5000"
     environment:
@@ -14,7 +14,7 @@ services:
 
   apt-cacher-ng:
     image: "sameersbn/apt-cacher-ng:latest"
-    restart: always
+    restart: "always"
     ports:
       - "3142:3142"
     volumes:
