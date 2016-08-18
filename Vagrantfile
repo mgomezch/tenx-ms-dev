@@ -34,7 +34,10 @@ Vagrant.configure(2) do |config|
     set -e
   # tee -a /etc/hosts <<< "$(route -n|sed -n -e 's/^0\.0\.0\.0  *\([^ ][^ ]*\) .* eth0/\1/p') host.vagrant.test"
     tee -a /etc/hosts <<< "10.0.2.2 host.vagrant.test"
-    tee -a /etc/apt/apt.conf.d/01proxy <<< 'Acquire::http { Proxy "http://host.vagrant.test:3142"; };'
+    tee -a /etc/apt/apt.conf.d/01proxy <<< '
+      Acquire::http { Proxy "http://host.vagrant.test:3142"; };
+      Acquire::https::Proxy "false";
+    '
     apt-get update
     apt-get install -y dnsmasq
     tee /etc/dnsmasq.d/channel-vpn <<< '
