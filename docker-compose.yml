@@ -1,0 +1,21 @@
+version: '2'
+
+services:
+
+  registry:
+    image: "registry:2"
+    restart: always
+    ports:
+      - "5000:5000"
+    environment:
+      REGISTRY_PROXY_REMOTEURL: "https://registry-1.docker.io"
+    volumes:
+      - "./docker/var/lib/registry:/var/lib/registry"
+
+  apt-cacher-ng:
+    image: "sameersbn/apt-cacher-ng:latest"
+    restart: always
+    ports:
+      - "3142:3142"
+    volumes:
+      - "./docker/var/cache/apt-cacher-ng:/var/cache/apt-cacher-ng"
