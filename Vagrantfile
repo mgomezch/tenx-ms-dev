@@ -21,7 +21,7 @@ end
 
 
 Vagrant.configure(2) do |config|
-  config.vm.box = 'ubuntu/trusty64'
+  config.vm.box = 'ubuntu/trusty64' # FIXME: Switch to ubuntu/xenial64 once this is resolved: https://bugs.launchpad.net/cloud-images/+bug/1605795
 
   config.landrush.enabled = true
 
@@ -45,9 +45,15 @@ Vagrant.configure(2) do |config|
       Acquire::https::Proxy "false";
     '
 
+    # Set up Docker APT source:
+    apt-get update
+    apt-get install -y apt-transport-https ca-certificates
+    apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
+    tee /etc/apt/sources.list.d/docker.list <<< "deb http://apt.dockerproject.org/repo ubuntu-$(lsb_release -cs) main"
+
     # Install basic development packages:
     apt-get update
-    apt-get install -y dnsmasq zsh tmux git-all gnupg-agent
+    apt-get install -y docker-engine dnsmasq zsh tmux git-all gnupg-agent
 
     # Set default user shell:
     chsh -s /bin/zsh vagrant
@@ -71,7 +77,7 @@ Vagrant.configure(2) do |config|
     service dnsmasq restart
 
     # Install Docker-managed Docker Compose shim:
-    sh -c 'curl --silent --retry 5 --location https://github.com/docker/compose/releases/download/1.8.0/run.sh > /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose'
+    sh -c 'curl --silent --retry 5 --location https://github.com/docker/compose/releases/download/1.8.0/run.sh > /usr/local/bin/docker-compose-1.8.0 && chmod +x /usr/local/bin/docker-compose-1.8.0'
   SHELL
 
 
@@ -106,7 +112,7 @@ Vagrant.configure(2) do |config|
   config.vm.provision(
     :docker,
     images: [
-      'jyore/flyway',
+      'jyore/flyway:3.2.1',
       'maven:3.3.9-jdk-8',
     ]
   )
@@ -117,5 +123,6 @@ Vagrant.configure(2) do |config|
     yml: '/vagrant/docker-compose-vagrant.yml',
     rebuild: true,
     run: 'always',
+    executable_install_path: '/usr/local/bin/docker-compose-1.8.0',
   )
 end
