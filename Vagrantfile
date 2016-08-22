@@ -23,12 +23,15 @@ end
 Vagrant.configure(2) do |config|
   config.vm.box = 'ubuntu/trusty64' # FIXME: Switch to ubuntu/xenial64 once this is resolved: https://bugs.launchpad.net/cloud-images/+bug/1605795
 
-  config.landrush.enabled = true
-
   config.vm.provider 'virtualbox' do |vb|
     vb.cpus = 2
     vb.memory = '1024'
   end
+
+
+
+  config.landrush.enabled = true
+  config.landrush.host_ip_address = "10.0.2.2" # FIXME: This is VirtualBox-specific
 
 
 
@@ -117,12 +120,15 @@ Vagrant.configure(2) do |config|
     ]
   )
 
-  # Bring up internal services specified in docker-compose-vagrant.yml
+  # Bring up internal services specified in docker-compose-vagrant.yml:
   config.vm.provision(
     :docker_compose,
     yml: '/vagrant/docker-compose-vagrant.yml',
     rebuild: true,
     run: 'always',
     executable_install_path: '/usr/local/bin/docker-compose-1.8.0',
+    env: {
+      COMPOSE_OPTIONS: '-v /vagrant:/vagrant'
+    }
   )
 end
