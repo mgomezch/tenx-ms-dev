@@ -39,7 +39,6 @@ plugins=(
   mercurial
   nmap
   node
-  npm
   nyan
   perl
   pep8
