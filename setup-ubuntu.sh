@@ -79,6 +79,21 @@ for f in /opt/vagrant/embedded/gems/gems/vagrant-*/bin/vagrant; do patch "${f}";
    logger = Log4r::Logger.new("vagrant::bin::vagrant")
 EOF
 
+# See https://github.com/vagrant-landrush/landrush/issues/255
+for f in ~/.vagrant.d/gems/gems/landrush-1.1.1/lib/landrush/cap/guest/all/read_host_visible_ip_address.rb; do patch "${f}"; break; done <<EOF
+--- landrush	2016-08-22 15:45:44.824978012 -0400
++++ landrush-patched	2016-08-22 15:45:39.137024945 -0400
+@@ -7,7 +7,7 @@
+             re = Regexp.union(@machine.config.landrush.host_interface_excludes)
+ 
+             addresses = addresses.select do |addr|
+-              !addr['name'].match(re)
++              !addr['name'].match(re) and addr.has_key? 'ipv4' and not addr['ipv4'].empty?
+             end
+           end
+ 
+EOF
+
 # Ensure the Landrush server is properly stopped:
 vagrant landrush stop || true
 rm -f ~/.vagrant.d/data/landrush/run/landrush.pid
