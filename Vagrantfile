@@ -31,7 +31,7 @@ Vagrant.configure(2) do |config|
 
 
   config.landrush.enabled = true
-  config.landrush.host_ip_address = "10.0.2.2" # FIXME: This is VirtualBox-specific
+  config.landrush.host_ip_address = '10.0.2.2' # FIXME: This is VirtualBox-specific
 
 
 
@@ -71,6 +71,9 @@ Vagrant.configure(2) do |config|
       server=/channelcorp.com/10.10.4.100
       server=/channelcorp.com/10.10.4.101
 
+      server=/channelauction.com/10.10.4.100
+      server=/channelauction.com/10.10.4.101
+
       server=/auction.local/10.10.4.100
       server=/auction.local/10.10.4.101
 
@@ -87,16 +90,22 @@ Vagrant.configure(2) do |config|
 
   # Set up default user environment:
 
-  config.vm.synced_folder "m2", "/home/vagrant/.m2"
-  config.vm.synced_folder "skel", "/home/vagrant/skel"
-
-  config.vm.provision 'shell', privileged: false, inline: <<-SHELL
-    set -e
-    touch .hushlogin
+  config.vm.provision 'shell', privileged: false, inline: '
     sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)" || true
-    rm -f ~/.zshrc ~/.zshtheme
-    find skel/ -mindepth 1 -maxdepth 1 -exec ln -s -t ~/ {} +
-  SHELL
+  '
+
+  %w(
+    .cvsignore
+    .hushlogin
+    .m2
+    .tmux.airline.conf
+    .tmux.conf
+    .vimrc
+    .zshrc
+    .zshtheme
+  ).each do |filename|
+    config.vm.provision 'file', source: "skel/#{filename}", destination: filename
+  end
 
 
 
