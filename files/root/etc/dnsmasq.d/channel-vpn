@@ -1,0 +1,19 @@
+server=10.0.2.2 # FIXME: This is VirtualBox-specific
+address=/host.vagrant.test/10.0.2.2
+
+server=/cdm.channel-corp.com/8.8.8.8
+
+server=/channel-corp.com/10.10.4.100
+server=/channel-corp.com/10.10.4.101
+
+server=/channelcorp.com/10.10.4.100
+server=/channelcorp.com/10.10.4.101
+
+server=/channelauction.com/10.10.4.100
+server=/channelauction.com/10.10.4.101
+
+server=/auction.local/10.10.4.100
+server=/auction.local/10.10.4.101
+
+address=/cs.enterprise.com/127.0.0.1
+address=/cd.enterprise.com/127.0.0.1
