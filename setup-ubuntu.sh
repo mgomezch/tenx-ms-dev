@@ -63,7 +63,7 @@ EOF
 sudo service dnsmasq restart
 
 # Make name lookups for .local domains not go through mDNS as they should, and hit DNS instead, as domains in auction.local are expected to resolve through the Channel internal DNS servers (in violation of RFC 6762 — be warned this breaks mDNS):
-sudo tee /etc/dnsmasq.d/channel-corp <<EOF
+sudo tee /etc/nsswitch.conf <<EOF
 passwd:         compat
 group:          compat
 shadow:         compat
