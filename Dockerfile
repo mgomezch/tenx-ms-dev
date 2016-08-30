@@ -23,6 +23,7 @@ RUN \
   echo '172.17.0.1 apt-cacher-ng' >> /etc/hosts && \
   echo '172.17.0.1 registry' >> /etc/hosts && \
   apt-get update && apt-get install -y \
+    ack-grep \
     curl \
     dnsmasq \
     dnsutils \
