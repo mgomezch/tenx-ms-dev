@@ -2,6 +2,23 @@ version: '2'
 
 services:
 
+  dev:
+    build: .
+    image: mahisoft/tenx-ms-dev
+#   links:
+#     - registry
+#     - apt-cacher-ng
+    stdin_open: true
+    tty: true
+    privileged: true # FIXME: use individual capabilities
+    network_mode: "host"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/tmp/.X11-unix:/tmp/.X11-unix"
+      - "~/.Xauthority:/root/.Xauthority"
+    environment:
+      - "DISPLAY"
+
   registry:
     image: "registry:2"
     restart: "always"

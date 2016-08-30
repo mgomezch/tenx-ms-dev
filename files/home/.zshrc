@@ -1,6 +1,6 @@
 # Path to your oh-my-zsh configuration.
 ZSH="${HOME}/.oh-my-zsh"
-#DEFAULT_USER=''
+DEFAULT_USER=''
 DISABLE_AUTO_TITLE='false'
 COMPLETION_WAITING_DOTS='true'
 DISABLE_UNTRACKED_FILES_DIRTY='false' # This makes Git faster but it can’t notice untracked files well.
@@ -23,7 +23,6 @@ plugins=(
   django
   docker
   docker-compose
-  emoji
   encode64
   gem
   git
@@ -33,7 +32,6 @@ plugins=(
   github
   gnu-utils
   golang
-  gpg-agent
   grunt
   heroku
   mercurial
@@ -55,7 +53,6 @@ plugins=(
   scala
   screen
   sprunge
-  ssh-agent
   stack
   sudo
   systemd
@@ -340,10 +337,11 @@ export         MANPATH="$(IFS=':'; printf '%s' "${man_new_paths[*]}"):${MANPATH}
 # Environment
 
 [[ ${TERM} == xterm ]] && export TERM='xterm-256color'
+export USER="${USER:-$(whoami)}"
 export LANG='en_US.UTF-8'
 export LC_ALL='en_US.UTF-8'
 export PAGER='less'
-export LESS='-S -r'
+export LESS='-S'
 export EDITOR='vim'
 export BC_LINE_LENGTH=0
 
@@ -353,4 +351,4 @@ export BC_LINE_LENGTH=0
 
 alias pstree='pstree -plaughs'
 
-alias mvn='docker run --rm -it -v /vagrant/m2:/root/.m2 -v "$PWD":/usr/src/mymaven -w /usr/src/mymaven --rm maven:3.3.9-jdk-8 mvn'
+alias mvn='docker run --rm -it -v ~/.m2:/root/.m2 -v "$PWD":/usr/src/mymaven -w /usr/src/mymaven --rm maven:3.3.9-jdk-8 mvn'

@@ -4,4 +4,4 @@
 m2
 docker
 *.box
-.vagrant
+files/ideaIC-*.tar.gz

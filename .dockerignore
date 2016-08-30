@@ -1,0 +1,7 @@
+docker
+.vagrant
+*.box
+**/*~
+**/*.sw?
+.git
+.gitignore
