@@ -340,8 +340,8 @@ export         MANPATH="$(IFS=':'; printf '%s' "${man_new_paths[*]}"):${MANPATH}
 export USER="${USER:-$(whoami)}"
 export LANG='en_US.UTF-8'
 export LC_ALL='en_US.UTF-8'
-export PAGER='less'
-export LESS='-S'
+export PAGER='less -S'
+export LESS='-r'
 export EDITOR='vim'
 export BC_LINE_LENGTH=0
 
