@@ -39,6 +39,11 @@ bind-interfaces
 no-resolv
 EOF
 
+# Make local DNS server accept queries on the Docker network interface:
+sudo tee /etc/dnsmasq.d/docker <<EOF
+interface=docker0
+EOF
+
 # Set up local DNS for Channel VPN:
 sudo tee /etc/dnsmasq.d/channel-corp <<EOF
 server=/cdm.channel-corp.com/8.8.8.8
