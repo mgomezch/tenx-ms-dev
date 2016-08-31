@@ -116,4 +116,7 @@ sudo service docker restart
 
 # Cache the IntelliJ IDEA Community Edition installation package:
 # Note: This has to be executed before building the Dockerfile
-wget --continue -P files/ http://download-cf.jetbrains.com/idea/ideaIC-2016.2.2.tar.gz
+wget \
+  --continue \
+  --directory-prefix 'files/' \
+  'http://download-cf.jetbrains.com/idea/ideaIC-2016.2.2.tar.gz' \
