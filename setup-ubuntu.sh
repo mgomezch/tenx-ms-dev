@@ -44,6 +44,12 @@ sudo tee /etc/dnsmasq.d/docker <<EOF
 interface=docker0
 EOF
 
+# Use the Google public DNS servers as defaults:
+sudo tee /etc/dnsmasq.d/google <<EOF
+server=8.8.8.8
+server=8.8.4.4
+EOF
+
 # Set up local DNS for Channel VPN:
 sudo tee /etc/dnsmasq.d/channel-corp <<EOF
 server=/cdm.channel-corp.com/8.8.8.8
@@ -95,7 +101,7 @@ Requires=docker.socket
 
 [Service]
 Type=notify
-ExecStart=/usr/bin/docker daemon -H fd:// --dns 172.17.0.1 --insecure-registry=registry.prod.auction.local:5000
+ExecStart=/usr/bin/docker daemon -H fd:// --bip=172.17.0.1/24 --dns=172.17.0.1 --insecure-registry=registry.prod.auction.local:5000
 MountFlags=slave
 LimitNOFILE=1048576
 LimitNPROC=1048576
