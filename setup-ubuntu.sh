@@ -115,6 +115,9 @@ Delegate=yes
 WantedBy=multi-user.target
 EOF
 
+# Remove conflicting configuration in daemon.json if it exists:
+sudo rm -f '/etc/docker/daemon.json'
+
 # Reload Docker daemon configuration:
 sudo systemctl daemon-reload
 sudo service docker restart
