@@ -53,6 +53,7 @@ EOF
 # Set up local DNS for Channel VPN:
 sudo tee /etc/dnsmasq.d/channel-corp <<EOF
 server=/cdm.channel-corp.com/8.8.8.8
+server=/r2.auction.com/8.8.8.8
 
 server=/channel-corp.com/10.3.10.23
 server=/channel-corp.com/10.3.10.24
