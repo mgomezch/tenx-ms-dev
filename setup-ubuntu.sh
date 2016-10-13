@@ -54,17 +54,17 @@ EOF
 sudo tee /etc/dnsmasq.d/channel-corp <<EOF
 server=/cdm.channel-corp.com/8.8.8.8
 
-server=/channel-corp.com/10.10.4.100
-server=/channel-corp.com/10.10.4.101
+server=/channel-corp.com/10.3.10.23
+server=/channel-corp.com/10.3.10.24
 
-server=/channelcorp.com/10.10.4.100
-server=/channelcorp.com/10.10.4.101
+server=/channelcorp.com/10.3.10.23
+server=/channelcorp.com/10.3.10.24
 
-server=/channelauction.com/10.10.4.100
-server=/channelauction.com/10.10.4.101
+server=/channelauction.com/10.3.10.23
+server=/channelauction.com/10.3.10.24
 
-server=/auction.local/10.10.4.100
-server=/auction.local/10.10.4.101
+server=/auction.local/10.3.10.23
+server=/auction.local/10.3.10.24
 
 address=/cs.enterprise.com/127.0.0.1
 address=/cd.enterprise.com/127.0.0.1
