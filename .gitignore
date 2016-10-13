@@ -1,7 +1,5 @@
 *.sw?
 *~
 
-m2
-docker
-*.box
+data
 files/ideaIC-*.tar.gz

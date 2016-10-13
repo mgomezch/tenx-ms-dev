@@ -27,7 +27,7 @@ services:
     environment:
       REGISTRY_PROXY_REMOTEURL: "https://registry-1.docker.io"
     volumes:
-      - "./docker/var/lib/registry:/var/lib/registry"
+      - "./data/registry:/var/lib/registry"
 
   apt-cacher-ng:
     image: "sameersbn/apt-cacher-ng:latest"
@@ -35,4 +35,4 @@ services:
     ports:
       - "3142:3142"
     volumes:
-      - "./docker/var/cache/apt-cacher-ng:/var/cache/apt-cacher-ng"
+      - "./data/apt-cacher-ng:/var/cache/apt-cacher-ng"
