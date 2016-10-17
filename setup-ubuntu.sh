@@ -21,13 +21,14 @@ sudo tee /etc/apt/sources.list.d/docker.list \
 
 # Install Docker, DNS server:
 
-# python-ipaddress: see https://github.com/docker/compose/issues/3525
 sudo apt-get update
 sudo apt-get install -y \
-  python-ipaddress \
   docker-engine \
   linux-image-extra-virtual \
   dnsmasq \
+
+# python-ipaddress: see https://github.com/docker/compose/issues/3525
+sudo apt-get install -y python-ipaddress || true
 
 # Install Docker:
 sudo adduser "${USER}" docker
