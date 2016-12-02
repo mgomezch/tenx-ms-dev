@@ -32,7 +32,7 @@ sudo apt-get install -y python-ipaddress || true
 
 # Install Docker:
 sudo adduser "${USER}" docker
-sudo sh -c 'curl --retry 5 -L https://github.com/docker/compose/releases/download/1.8.0/run.sh > /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose'
+sudo sh -c 'curl --retry 5 -L https://github.com/docker/compose/releases/download/1.9.0/run.sh > /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose'
 
 # Set up local DNS server:
 sudo tee /etc/dnsmasq.d/interfaces <<EOF
