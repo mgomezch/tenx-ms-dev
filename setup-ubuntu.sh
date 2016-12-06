@@ -34,25 +34,22 @@ sudo apt-get install -y python-ipaddress || true
 sudo adduser "${USER}" docker
 sudo sh -c 'curl --retry 5 -L https://github.com/docker/compose/releases/download/1.9.0/run.sh > /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose'
 
+# Remove leftover dnsmasq configuration files from old versions of this script:
+sudo rm -f '/etc/dnsmasq.d/docker' '/etc/dnsmasq.d/interfaces'
+
 # Set up local DNS server:
-sudo tee /etc/dnsmasq.d/interfaces <<EOF
-bind-interfaces
+sudo tee '/etc/dnsmasq.d/no-resolv' <<EOF
 no-resolv
 EOF
 
-# Make local DNS server accept queries on the Docker network interface:
-sudo tee /etc/dnsmasq.d/docker <<EOF
-interface=docker0
-EOF
-
 # Use the Google public DNS servers as defaults:
-sudo tee /etc/dnsmasq.d/google <<EOF
+sudo tee '/etc/dnsmasq.d/google' <<EOF
 server=8.8.8.8
 server=8.8.4.4
 EOF
 
 # Set up local DNS for Channel VPN:
-sudo tee /etc/dnsmasq.d/channel-corp <<EOF
+sudo tee '/etc/dnsmasq.d/channel-corp' <<EOF
 server=/cdm.channel-corp.com/8.8.8.8
 server=/r2.auction.com/8.8.8.8
 
@@ -74,11 +71,15 @@ address=/cs.enterprise.com/127.0.0.1
 address=/cd.enterprise.com/127.0.0.1
 EOF
 
+# Disable Network Manager dnsmasq instances:
+sudo sed -i '/etc/NetworkManager/NetworkManager.conf' -e 's/^dns=dnsmasq$/#&/'
+sudo pkill -f 'dnsmasq.*NetworkManager'
+
 # Reload local DNS configuration:
 sudo service dnsmasq restart
 
 # Make name lookups for .local domains not go through mDNS as they should, and hit DNS instead, as domains in auction.local are expected to resolve through the Channel internal DNS servers (in violation of RFC 6762 — be warned this breaks mDNS):
-sudo tee /etc/nsswitch.conf <<EOF
+sudo tee '/etc/nsswitch.conf' <<EOF
 passwd:         compat
 group:          compat
 shadow:         compat
@@ -96,30 +97,15 @@ netgroup:       nis
 EOF
 
 # Configure Docker daemon:
-sudo tee /lib/systemd/system/docker.service <<EOF
-[Unit]
-Description=Docker Application Container Engine
-Documentation=https://docs.docker.com
-After=network.target docker.socket
-Requires=docker.socket
-
-[Service]
-Type=notify
-ExecStart=/usr/bin/docker daemon -H fd:// --bip=172.17.0.1/24 --dns=172.17.0.1 --insecure-registry=registry.prod.auction.local:5000
-MountFlags=slave
-LimitNOFILE=1048576
-LimitNPROC=1048576
-LimitCORE=infinity
-TimeoutStartSec=0
-# set delegate yes so that systemd does not reset the cgroups of docker containers
-Delegate=yes
-
-[Install]
-WantedBy=multi-user.target
+sudo tee '/etc/docker/daemon.json' <<EOF
+{
+  "bip": "172.17.0.1/24",
+  "dns": ["172.17.0.1"],
+  "insecure-registries": [
+    "registry.prod.auction.local:5000"
+  ]
+}
 EOF
-
-# Remove conflicting configuration in daemon.json if it exists:
-sudo rm -f '/etc/docker/daemon.json'
 
 # Reload Docker daemon configuration:
 sudo systemctl daemon-reload
