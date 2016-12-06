@@ -74,6 +74,7 @@ EOF
 
 # Disable Network Manager dnsmasq instances:
 sudo sed -i '/etc/NetworkManager/NetworkManager.conf' -e 's/^dns=dnsmasq$/#&/'
+sudo rm -f '/etc/dnsmasq.d/network-manager'
 sudo pkill -f 'dnsmasq.*NetworkManager'
 
 # Reload local DNS configuration:
