@@ -38,8 +38,9 @@ sudo sh -c 'curl --retry 5 -L https://github.com/docker/compose/releases/downloa
 sudo rm -f '/etc/dnsmasq.d/docker' '/etc/dnsmasq.d/interfaces'
 
 # Set up local DNS server:
-sudo tee '/etc/dnsmasq.d/no-resolv' <<EOF
+sudo tee '/etc/dnsmasq.d/basic' <<EOF
 no-resolv
+bind-dynamic
 EOF
 
 # Use the Google public DNS servers as defaults:
