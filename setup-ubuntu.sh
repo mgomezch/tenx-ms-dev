@@ -35,19 +35,36 @@ sudo adduser "${USER}" docker
 sudo sh -c 'curl --retry 5 -L https://github.com/docker/compose/releases/download/1.9.0/run.sh > /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose'
 
 # Remove leftover dnsmasq configuration files from old versions of this script:
-sudo rm -f '/etc/dnsmasq.d/docker' '/etc/dnsmasq.d/interfaces'
+sudo rm -f '/etc/dnsmasq.d/'{'docker','interfaces'}
 
-# Set up local DNS server:
+# Set up a local DNS forwarding server on the current host.  This server will be
+# in charge of DNS resolution for all locally executed applications as well as
+# any Docker containers managed by this host, as it will be available on the
+# host's loopback interface as well as the host's address on the Docker bridge
+# network interface.
+#
+# The no-resolv option makes the local dnsmasq instance ignore the pre-existing
+# DNS servers defined in /etc/resolv.conf at the time the dnsmasq server starts,
+# which makes it rely instead on its configuration files to find suitable back
+# ends for each query it receives.
 sudo tee '/etc/dnsmasq.d/basic' <<EOF
 no-resolv
 bind-dynamic
 EOF
 
-# Use the Google public DNS servers as defaults:
+# Use the Google public DNS servers as the default back ends for DNS queries in
+# regions of the DNS namespace with no otherwise specified back end servers:
 sudo tee '/etc/dnsmasq.d/google' <<EOF
 server=8.8.8.8
 server=8.8.4.4
 EOF
+
+# If any dnsmasq configuration files enable the bind-interfaces option, it will
+# conclict with 
+for file in /etc/dnsmasq.d/*
+do
+  sed -i -e 's/^\s*bind-interfaces\s*\(#.*\)\?$/# &/' "${file}"
+done
 
 # Set up local DNS for Channel VPN:
 sudo tee '/etc/dnsmasq.d/channel-corp' <<EOF
