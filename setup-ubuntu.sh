@@ -35,7 +35,7 @@ sudo adduser "${USER}" docker
 sudo sh -c 'curl --retry 5 -L https://github.com/docker/compose/releases/download/1.9.0/run.sh > /usr/local/bin/docker-compose && chmod +x /usr/local/bin/docker-compose'
 
 # Remove leftover dnsmasq configuration files from old versions of this script:
-sudo rm -f '/etc/dnsmasq.d/'{'docker','interfaces'}
+sudo rm -f '/etc/dnsmasq.d/'{'docker','interfaces','channel-corp'}
 
 # Set up a local DNS forwarding server on the current host.  This server will be
 # in charge of DNS resolution for all locally executed applications as well as
@@ -85,7 +85,7 @@ done
 #
 # TODO: This file should be generated dynamically on connection to the Ten-X VPN
 # using the DNS IP addresses provided by DHCP.
-sudo tee '/etc/dnsmasq.d/channel-corp' <<EOF
+sudo tee '/etc/dnsmasq.d/tenx' <<EOF
 
 # VPN endpoints should be resolved through the public DNS, as they have to be
 # resolved before any VPN link is established.
@@ -119,8 +119,8 @@ address=/cd.enterprise.com/127.0.0.1
 
 EOF
 
-# Disable Network Manager dnsmasq instances:
-# TODO: expand comment
+# Disable Network Manager dnsmasq instances, as they could interfere with the
+# dnsmasq configuration used by Docker containers.
 sudo sed -i '/etc/NetworkManager/NetworkManager.conf' -e 's/^dns=dnsmasq$/#&/'
 sudo rm -f '/etc/dnsmasq.d/network-manager'
 sudo pkill -f 'dnsmasq.*NetworkManager'
@@ -154,7 +154,12 @@ rpc:            db files
 netgroup:       nis
 EOF
 
-# Configure Docker daemon:
+# Configure the Docker daemon to use a specific address range for its default
+# docker0 bridge network interface and give the Docker host a specific address
+# within that range.  Additionally, configure containers managed by Docker to
+# use the Docker host as a DNS server; this should allow them to hit the dnsmasq
+# instance running on the Docker host, which in turn allows them to resolve and
+# access private domain names in a VPN.
 # TODO: expand comment
 sudo tee '/etc/docker/daemon.json' <<EOF
 {
