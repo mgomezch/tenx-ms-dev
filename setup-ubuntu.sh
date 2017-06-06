@@ -120,6 +120,9 @@ server=/auction.local/10.3.10.24
 address=/cs.enterprise.com/127.0.0.1
 address=/cd.enterprise.com/127.0.0.1
 
+server=/git.ten-x.io/10.3.10.23
+server=/git.ten-x.io/10.3.10.24
+
 EOF
 
 # Disable Network Manager dnsmasq instances, as they could interfere with the
