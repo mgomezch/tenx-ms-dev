@@ -59,5 +59,5 @@ case "${1}" in
   ('set-username') tenx-vpn-set-username ;;
   ('set-password') tenx-vpn-set-password ;;
   ('connect') tenx-vpn-connect ;;
-  (*) echo "Usage: $0 {setup|set-password|connect}"
+  (*) echo "Usage: $0 {setup|set-username|set-password|connect}"
 esac
