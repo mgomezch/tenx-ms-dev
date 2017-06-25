@@ -3,55 +3,80 @@
 set -e
 
 
+config_dir="${HOME}/.config/tenx-vpn"
+keyring_key='tenx'
+keyring_label='Ten-X VPN password (r2.auction.com)'
+keyring_value='r2.auction.com'
+password_cipher='aes256'
+password_file="${config_dir}/password.${password_cipher}"
+username_file="${config_dir}/username"
 
-tenx_config_dir="${HOME}/.config/tenx-vpn"
-tenx_username_file="${tenx_config_dir}/username"
-tenx_password_cipher='aes256'
-tenx_password_file="${tenx_config_dir}/password.${tenx_password_cipher}"
 
+use_keyring="$(command -v secret-tool > '/dev/null' 2>&1; echo "$?")"
 
 
 function tenx-vpn-setup() {
-  mkdir -p "${tenx_config_dir}" &&
+  mkdir -p "${config_dir}" &&
   tenx-vpn-set-username &&
   tenx-vpn-set-password
 }
 
 
-
 function tenx-vpn-set-username() {
   printf 'Ten-X username: ' &&
-  read 'tenx_username' &&
-  printf '%s' "${tenx_username}" | tee "${tenx_username_file}" > '/dev/null'
+  read 'username' &&
+  printf '%s' "${username}" | tee "${username_file}" > '/dev/null'
 }
-
 
 
 function tenx-vpn-set-password() {
   (
-    printf 'New Ten-X password: ' &&
-    read -rs 'tenx_password' &&
-    printf '\nCreating encrypted password file; ' &&
-    openssl enc -e -"${tenx_password_cipher}" -a \
-      <<< "${tenx_password}" \
-      | tee "${tenx_password_file}" > '/dev/null'
+    if [[ "${use_keyring}" ]]
+    then
+      echo 'Saving new Ten-X password in keyring' &&
+      secret-tool store \
+        --label="${keyring_label}" \
+        "${keyring_key}" \
+        "${keyring_value}"
+    else
+      printf 'Saving new Ten-X password in encrypted file\nPassword: ' &&
+      read -rs 'password' &&
+      printf '\nCreating encrypted password file; ' &&
+      openssl enc -e -"${password_cipher}" -a \
+        <<< "${password}" \
+        | tee "${password_file}" > '/dev/null'
+    fi
   )
 }
 
 
-
 function tenx-vpn-connect() {
-  sudo openconnect \
-    --user="$(cat "${tenx_username_file}")" \
-    --passwd-on-stdin \
-    --authgroup=AUCTION-EMPL-ANYCONNECT \
-    --verbose r2.auction.com \
-    <<< "$(openssl enc -d -"${tenx_password_cipher}" -a < "${tenx_password_file}")"$'\nPUSH' \
-    &&
+  (
+    if [[ "${use_keyring}" ]]
+    then
+      password="$(
+        secret-tool lookup \
+          "${keyring_key}" \
+          "${keyring_value}"
+      )"
+    else
+      password="$(
+        openssl enc -d \
+          -"${password_cipher}" \
+          -a \
+          < "${password_file}"
+      )"
+    fi &&
+    sudo openconnect \
+      --user="$(cat "${username_file}")" \
+      --passwd-on-stdin \
+      --authgroup=AUCTION-EMPL-ANYCONNECT \
+      --verbose r2.auction.com \
+      <<< "${password}"$'\nPUSH' \
+  ) &&
   sudo ip route add '10.0.0.0/8' dev 'tun0' &&
   sudo route del default 'tun0'
 }
-
 
 
 case "${1}" in
