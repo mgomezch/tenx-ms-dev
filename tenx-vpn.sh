@@ -52,7 +52,7 @@ function tenx-vpn-set-password() {
 
 function tenx-vpn-connect() {
   (
-    if [[ "${use_keyring}" ]]
+    if [[ ! -z "${use_keyring}" ]]
     then
       password="$(
         secret-tool lookup \
