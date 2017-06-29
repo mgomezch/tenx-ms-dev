@@ -31,7 +31,7 @@ function tenx-vpn-set-username() {
 
 function tenx-vpn-set-password() {
   (
-    if [[ "${use_keyring}" ]]
+    if [[ -z "${use_keyring}" ]]
     then
       echo 'Saving new Ten-X password in keyring' &&
       secret-tool store \
@@ -52,7 +52,7 @@ function tenx-vpn-set-password() {
 
 function tenx-vpn-connect() {
   (
-    if [[ ! -z "${use_keyring}" ]]
+    if [[ -z "${use_keyring}" ]]
     then
       password="$(
         secret-tool lookup \
