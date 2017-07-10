@@ -75,6 +75,11 @@ function tenx-vpn-connect() {
       <<< "${password}"$'\nPUSH' \
   ) &&
   sudo ip route add '10.0.0.0/8' dev 'tun0' &&
+
+  # dev.ten-x.com resolves equally in public and private DNS but only
+  # accepts VPN traffic:
+  sudo ip route add "$(dig +short dev.ten-x.com)" dev tun0 &&
+
   sudo route del default 'tun0'
 }
 
